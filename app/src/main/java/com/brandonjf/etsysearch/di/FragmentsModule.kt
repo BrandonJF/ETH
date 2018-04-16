@@ -13,4 +13,3 @@ abstract class FragmentsModule {
     @ContributesAndroidInjector
     abstract fun contributeSearchFragmentInjector(): SearchFragment
 }
-

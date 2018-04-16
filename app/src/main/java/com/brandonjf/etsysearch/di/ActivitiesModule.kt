@@ -13,4 +13,3 @@ abstract class ActivitiesModule {
     @ContributesAndroidInjector
     abstract fun contributeSearchActivityInjector(): SearchActivity
 }
-

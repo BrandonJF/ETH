@@ -6,83 +6,83 @@ import com.squareup.moshi.Json
  * JSON Representative class for response from active listings endpoint
  */
 data class ActiveListingResponse(
-    @Json(name = "count") val count: Int,
-    @Json(name = "results") val results: List<ActiveListing>, // changing param name for clarity
-    @Json(name = "params") val params: Params,
-    @Json(name = "type") val type: String,
-    @Json(name = "pagination") val pagination: Pagination
+    @Json(name = "count") var count: Int,
+    @Json(name = "results") var results: List<ActiveListing>, // changing param name for clarity
+    @Json(name = "params") var params: Params,
+    @Json(name = "type") var type: String,
+    @field:Json(name = "pagination") var pagination: Pagination
 )
 
 data class Params(
-    @Json(name = "limit") val limit: String,
-    @Json(name = "offset") val offset: Int,
-    @Json(name = "keywords") val keywords: String,
-    @Json(name = "sort_on") val sortOn: String,
-    @Json(name = "sort_order") val sortOrder: String,
-    @Json(name = "color_accuracy") val colorAccuracy: Int,
-    @Json(name = "geo_level") val geoLevel: String,
-    @Json(name = "accepts_gift_cards") val acceptsGiftCards: String,
-    @Json(name = "translate_keywords") val translateKeywords: String
+    @Json(name = "limit") var limit: String,
+    @Json(name = "offset") var offset: Int,
+    @Json(name = "keywords") var keywords: String,
+    @Json(name = "sort_on") var sortOn: String,
+    @Json(name = "sort_order") var sortOrder: String,
+    @Json(name = "color_accuracy") var colorAccuracy: Int,
+    @Json(name = "geo_level") var geoLevel: String,
+    @Json(name = "accepts_gift_cards") var acceptsGiftCards: String,
+    @Json(name = "translate_keywords") var translateKeywords: String
 )
 
 data class ActiveListing(
-    @Json(name = "listing_id") val listingId: Int,
-    @Json(name = "state") val state: String,
-    @Json(name = "user_id") val userId: Int,
-    @Json(name = "category_id") val categoryId: Int,
-    @Json(name = "title") val title: String,
-    @Json(name = "description") val description: String,
-    @Json(name = "creation_tsz") val creationTsz: Int,
-    @Json(name = "ending_tsz") val endingTsz: Int,
-    @Json(name = "original_creation_tsz") val originalCreationTsz: Int,
-    @Json(name = "last_modified_tsz") val lastModifiedTsz: Int,
-    @Json(name = "price") val price: String,
-    @Json(name = "currency_code") val currencyCode: String,
-    @Json(name = "quantity") val quantity: Int,
-    @Json(name = "tags") val tags: List<String>,
-    @Json(name = "category_path") val categoryPath: List<String>,
-    @Json(name = "category_path_ids") val categoryPathIds: List<Int>,
-    @Json(name = "materials") val materials: List<String>,
-    @Json(name = "shop_section_id") val shopSectionId: Int,
-    @Json(name = "state_tsz") val stateTsz: Int,
-    @Json(name = "url") val url: String,
-    @Json(name = "views") val views: Int,
-    @Json(name = "num_favorers") val numFavorers: Int,
-    @Json(name = "shipping_template_id") val shippingTemplateId: Long,
-    @Json(name = "processing_min") val processingMin: Int,
-    @Json(name = "processing_max") val processingMax: Int,
-    @Json(name = "who_made") val whoMade: String,
-    @Json(name = "is_supply") val isSupply: String,
-    @Json(name = "when_made") val whenMade: String,
-    @Json(name = "item_dimensions_unit") val itemDimensionsUnit: String,
-    @Json(name = "is_private") val isPrivate: Boolean,
-    @Json(name = "non_taxable") val nonTaxable: Boolean,
-    @Json(name = "is_customizable") val isCustomizable: Boolean,
-    @Json(name = "is_digital") val isDigital: Boolean,
-    @Json(name = "file_data") val fileData: String,
-    @Json(name = "should_auto_renew") val shouldAutoRenew: Boolean,
-    @Json(name = "language") val language: String,
-    @Json(name = "has_variations") val hasVariations: Boolean,
-    @Json(name = "taxonomy_id") val taxonomyId: Int,
-    @Json(name = "taxonomy_path") val taxonomyPath: List<String>,
-    @Json(name = "used_manufacturer") val usedManufacturer: Boolean,
-    @Json(name = "sku") val sku: List<String>,
-    @field:Json(name = "MainImage") val mainImage: MainImage
+    @Json(name = "listing_id") var listingId: Int,
+    @Json(name = "state") var state: String,
+    @Json(name = "user_id") var userId: Int,
+    @Json(name = "category_id") var categoryId: Int,
+    @Json(name = "title") var title: String,
+    @Json(name = "description") var description: String,
+    @Json(name = "creation_tsz") var creationTsz: Int,
+    @Json(name = "ending_tsz") var endingTsz: Int,
+    @Json(name = "original_creation_tsz") var originalCreationTsz: Int,
+    @Json(name = "last_modified_tsz") var lastModifiedTsz: Int,
+    @Json(name = "price") var price: String,
+    @Json(name = "currency_code") var currencyCode: String,
+    @Json(name = "quantity") var quantity: Int,
+    @Json(name = "tags") var tags: List<String>,
+    @Json(name = "category_path") var categoryPath: List<String>,
+    @Json(name = "category_path_ids") var categoryPathIds: List<Int>,
+    @Json(name = "materials") var materials: List<String>,
+    @Json(name = "shop_section_id") var shopSectionId: Int,
+    @Json(name = "state_tsz") var stateTsz: Int,
+    @Json(name = "url") var url: String,
+    @Json(name = "views") var views: Int,
+    @Json(name = "num_favorers") var numFavorers: Int,
+    @Json(name = "shipping_template_id") var shippingTemplateId: Long,
+    @Json(name = "processing_min") var processingMin: Int,
+    @Json(name = "processing_max") var processingMax: Int,
+    @Json(name = "who_made") var whoMade: String,
+    @Json(name = "is_supply") var isSupply: String,
+    @Json(name = "when_made") var whenMade: String,
+    @Json(name = "item_dimensions_unit") var itemDimensionsUnit: String,
+    @Json(name = "is_private") var isPrivate: Boolean,
+    @Json(name = "non_taxable") var nonTaxable: Boolean,
+    @Json(name = "is_customizable") var isCustomizable: Boolean,
+    @Json(name = "is_digital") var isDigital: Boolean,
+    @Json(name = "file_data") var fileData: String,
+    @Json(name = "should_auto_renew") var shouldAutoRenew: Boolean,
+    @Json(name = "language") var language: String,
+    @Json(name = "has_variations") var hasVariations: Boolean,
+    @Json(name = "taxonomy_id") var taxonomyId: Int,
+    @Json(name = "taxonomy_path") var taxonomyPath: List<String>,
+    @Json(name = "used_manufacturer") var usedManufacturer: Boolean,
+    @Json(name = "sku") var sku: List<String>,
+    @field:Json(name = "MainImage") var mainImage: MainImage
 )
 
 data class MainImage(
-    @Json(name = "listing_image_id") val listingImageId: Int,
-    @Json(name = "listing_id") val listingId: Int,
-    @field:Json(name = "url_75x75") val url75x75: String,
-    @field:Json(name = "url_170x135") val url170x135: String,
-    @field:Json(name = "url_570xN") val url570xN: String,
-    @field:Json(name = "url_fullxfull") val urlFullxfull: String
+    @Json(name = "listing_image_id") var listingImageId: Int,
+    @Json(name = "listing_id") var listingId: Int,
+    @field:Json(name = "url_75x75") var url75x75: String,
+    @field:Json(name = "url_170x135") var url170x135: String,
+    @field:Json(name = "url_570xN") var url570xN: String,
+    @field:Json(name = "url_fullxfull") var urlFullxfull: String
 )
 
 data class Pagination(
-    @Json(name = "effective_limit") val effectiveLimit: Int,
-    @Json(name = "effective_offset") val effectiveOffset: Int,
-    @Json(name = "next_offset") val nextOffset: Int,
-    @Json(name = "effective_page") val effectivePage: Int,
-    @Json(name = "next_page") val nextPage: Int
+    @field:Json(name = "effective_limit") var effectiveLimit: Int?,
+    @field:Json(name = "effective_offset") var effectiveOffset: Int = 0,
+    @field:Json(name = "next_offset") var nextOffset: Int?,
+    @field:Json(name = "effective_page") var effectivePage: String?, //Deserializing pages as strings mitigates a few issues.
+    @field:Json(name = "next_page") var nextPage: Int?
 )

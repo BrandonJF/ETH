@@ -21,4 +21,3 @@ class App : DaggerApplication() {
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
     }
 }
-

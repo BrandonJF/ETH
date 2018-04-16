@@ -24,6 +24,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dataBinding {
+        enabled = true
+    }
 }
 
 
@@ -49,32 +56,20 @@ dependencies {
 
     //Serialization
     implementation dependencies.moshi
-    implementation dependencies.moshiKotlin
+//    implementation dependencies.moshiKotlin
     implementation dependencies.moshiConverter
 
     //Photo Handling
     implementation dependencies.glide
 
-//    //Dagger
-//    implementation dependencies.dagger
-//    implementation dependencies.daggerSupport
-//    kapt dependencies.daggerSupport
-//    kapt dependencies.daggerProcessor
-//    kapt dependencies.daggerCompiler
-//    implementation dependencies.daggerAndroid
 
-//    implementation "com.google.dagger:dagger:2.12"
-//    implementation "com.google.dagger:dagger-android:2.12"
-//    implementation "com.google.dagger:dagger-android-support:2.12"
-//    kapt "com.google.dagger:dagger-android-processor:2.12"
-//    annotationProcessor "com.google.dagger:dagger-compiler:2.12"
-//    kapt "com.google.dagger:dagger-compiler:2.12"
+    //Dagger
+   implementation deps.dagger.runtime
 
-    implementation "com.google.dagger:dagger:2.15"
-    implementation "com.google.dagger:dagger-android:2.15"
-    implementation "com.google.dagger:dagger-android-support:2.15"
-    kapt "com.google.dagger:dagger-compiler:2.15"
-    kapt "com.google.dagger:dagger-android-processor:2.15"
+    implementation dependencies.daggerAndroid
+    implementation dependencies.daggerAndroidSupport
+    kapt dependencies.daggerCompiler
+    kapt dependencies.daggerProcessor
 
 
     //Logging
@@ -85,7 +80,16 @@ dependencies {
     //Architecture Components
     implementation dependencies.archRuntime
     implementation dependencies.archExtensions
+//    implementation deps.arch.lifecycleJava8
+    implementation deps.paging.runtime
+    implementation deps.paging.rx
     kapt dependencies.archCompiler
+
+    //RxBinding
+    implementation deps.rxBinding.support
+    implementation deps.rxBinding.kotlin
+    implementation deps.rxBinding.appCompat
+    implementation deps.rxBinding.recycler
 
     //Support Libs
     implementation dependencies.supportBase

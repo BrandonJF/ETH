@@ -1,27 +1,25 @@
 package com.brandonjf.etsysearch.ui.search
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.Menu
 import android.view.MenuItem
 import com.brandonjf.etsysearch.R
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.activity_search.*
-import timber.log.Timber
 
 class SearchActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        if (savedInstanceState == null) setupFragment()
+    }
 
-        Timber.d("SearchActivity created!")
+    private fun setupFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.cl_fragmentContainer, SearchFragment())
+            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
