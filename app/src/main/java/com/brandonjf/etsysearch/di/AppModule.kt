@@ -1,8 +1,8 @@
 package com.brandonjf.etsysearch.di
 
-import brandonjf.com.searchsy.data.repository.ListingRepositoryContract
 import com.brandonjf.etsysearch.EtsyService
 import com.brandonjf.etsysearch.ListingRepository
+import com.brandonjf.etsysearch.ListingRepositoryContract
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides

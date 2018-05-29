@@ -12,7 +12,4 @@ class ListingViewHolder(val binding: ListingItemBinding) : RecyclerView.ViewHold
             executePendingBindings()
         }
     }
-
-    fun clear() {
-    }
 }

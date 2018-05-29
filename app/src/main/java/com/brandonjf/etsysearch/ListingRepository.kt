@@ -2,7 +2,6 @@ package com.brandonjf.etsysearch
 
 import android.arch.paging.PagedList
 import android.arch.paging.RxPagedListBuilder
-import brandonjf.com.searchsy.data.repository.ListingRepositoryContract
 import com.brandonjf.etsysearch.ui.search.PagedListData
 import com.brandonjf.etsysearch.ui.search.data.source.ListingDataSourceFactory
 import io.reactivex.Observable

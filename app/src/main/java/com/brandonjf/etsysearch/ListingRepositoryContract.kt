@@ -1,6 +1,5 @@
-package brandonjf.com.searchsy.data.repository
+package com.brandonjf.etsysearch
 
-import com.brandonjf.etsysearch.ActiveListing
 import com.brandonjf.etsysearch.ui.search.PagedListData
 
 /**

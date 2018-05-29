@@ -1,5 +1,6 @@
 package com.brandonjf.etsysearch.ui.search
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -10,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.brandonjf.etsysearch.R
 import com.brandonjf.etsysearch.databinding.FragmentSearchBinding
-import com.brandonjf.etsysearch.ui.common.applyObservableSchedulers
 import com.brandonjf.etsysearch.ui.search.interfaces.ActionObserver
 import com.brandonjf.etsysearch.ui.search.view.adapter.ListingAdapter
 import com.brandonjf.etsysearch.ui.search.viewmodel.SearchViewModel
@@ -25,55 +25,60 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
- * A placeholder fragment containing a simple view.
+ * The main fragment which serves as a view for active listings. Architected in a MVVM pattern, the view is sub'd to
+ * the viewmodel's livedata and Rx Observables.
+ *
  */
 class SearchFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var compositeDisposable: CompositeDisposable
+    private val compositeDisposable = CompositeDisposable()
+    private val listingAdapter: ListingAdapter = ListingAdapter()
+    private val actionObservable: PublishSubject<Action> = PublishSubject.create()
 
     private lateinit var searchViewModel: SearchViewModel
-    private lateinit var listingAdapter: ListingAdapter
-    private lateinit var binding: FragmentSearchBinding
-
-    private val actionObservable: PublishSubject<Action> = PublishSubject.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        searchViewModel = getViewModel()
+        setupViewModel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container,false)
-        return binding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        FragmentSearchBinding.inflate(inflater, container, false).let { binding ->
+            setupBinding(binding)
+            return binding.root
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupAdapter()
+        setupRecyclerView()
         setupSearchInput()
-        bindActionsToObserver(searchViewModel)
-        binding.viewModel = searchViewModel
+        observeViewModelData()
     }
 
-    private fun getViewModel(): SearchViewModel {
-        return ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java].apply {
-            lifecycle.addObserver(this)
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
+    }
+
+    private fun setupViewModel() {
+        ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java].let { viewModel ->
+            searchViewModel = viewModel
+            lifecycle.addObserver(viewModel)
+            (viewModel as? ActionObserver)?.bindActionObservable(actionObservable)
         }
     }
 
-    private fun setupAdapter() {
-        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        listingAdapter = ListingAdapter()
-        rv_searchResults.layoutManager = linearLayoutManager
-        rv_searchResults.adapter = listingAdapter
+    private fun setupBinding(binding: FragmentSearchBinding) {
+        if (::searchViewModel.isInitialized) binding.viewModel = searchViewModel
+    }
+
+    private fun setupRecyclerView() = with(rv_searchResults) {
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        adapter = listingAdapter
     }
 
     private fun setupSearchInput() {
@@ -83,43 +88,35 @@ class SearchFragment : DaggerFragment() {
             .subscribeOn(Schedulers.io())
             .map { it.toString() }
             .skip(1)
-            .filter { it.isNotBlank() }
             .debounce(500, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .doOnNext { Timber.d(it) }
-            .map { Action.Search(it) }
+            .map {
+                Action.Search(it)
+            }
             .subscribe(actionObservable::onNext)
             .let(compositeDisposable::add)
     }
 
-    private fun bindActionsToObserver(observer: ActionObserver) {
-        observer.bindActionObservable(actionObservable)
-    }
-
-    private fun setupListingListener() {
-//        searchViewModel.getListingData()
-//            .compose(applyObservableSchedulers())
-//            .subscribe(listingAdapter::submitList)
-//            .let(compositeDisposable::add)
-
-        searchViewModel.getNetworkState()
-            .compose(applyObservableSchedulers())
-            .subscribe(listingAdapter::setNetworkState)
-            .let(compositeDisposable::add)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        setupListingListener()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        compositeDisposable.clear()
+    private fun observeViewModelData() {
+        searchViewModel.viewStateLiveData.observe(this, Observer {
+            it?.let { state ->
+                if (state.isEmpty) {
+                    //hide the RV
+                } else {
+                    state.pagedListLiveData.observe(this, Observer {
+                        it?.let(listingAdapter::submitList)
+                            ?.also { rv_searchResults.smoothScrollToPosition(0) }
+                    })
+                }
+            }
+        })
+//        searchViewModel.pagedListLiveData.observe(this, Observer {
+//            it?.let(listingAdapter::submitList)
+//                ?.also { rv_searchResults.smoothScrollToPosition(0) }
+//        })
+//        searchViewModel.dataStateLiveData.observe(this, Observer {
+//            it?.let(listingAdapter::setNetworkState)
+//        })
     }
 }

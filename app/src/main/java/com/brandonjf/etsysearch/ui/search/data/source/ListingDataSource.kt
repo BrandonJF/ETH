@@ -7,7 +7,6 @@ import com.brandonjf.etsysearch.EtsyService
 import com.brandonjf.etsysearch.ui.common.applyObservableSchedulers
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
@@ -19,10 +18,10 @@ class ListingDataSource @Inject constructor(
     private var compositeDisposable: CompositeDisposable
 ) : PageKeyedDataSource<Int, ActiveListing>() {
 
-    private val networkState = BehaviorSubject.create<NetworkState>()
+    private val dataState = BehaviorSubject.create<DataState>()
 
-    fun getNetworkState(): Observable<NetworkState>? {
-        return networkState
+    fun getNetworkState(): Observable<DataState>? {
+        return dataState
             .toFlowable(BackpressureStrategy.LATEST)
             .toObservable()
     }
@@ -30,15 +29,17 @@ class ListingDataSource @Inject constructor(
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, ActiveListing>) {
         service.getListingsByPage(keywords, INITIAL_PAGE_KEY)
             .compose(applyObservableSchedulers())
-            .compose(applyNetworkState())
+            .doOnSubscribe { dataState.onNext(DataState.Loading) }
             .doOnError(this::handleLoadError)
             .subscribe({ response: ActiveListingResponse ->
-                onLoadInitialSuccess(callback, response )},
+                dataState.onNext(if (response.count > 0) DataState.Loaded else DataState.Empty)
+                onLoadInitialSuccess(callback, response)
+            },
                 this::handleLoadError)
             .let(compositeDisposable::add)
     }
 
-    fun onLoadInitialSuccess(callback:LoadInitialCallback<Int,ActiveListing>, response: ActiveListingResponse) {
+    fun onLoadInitialSuccess(callback: LoadInitialCallback<Int, ActiveListing>, response: ActiveListingResponse) {
         callback.onResult(
             response.results,
             response.pagination.effectiveOffset,
@@ -51,12 +52,13 @@ class ListingDataSource @Inject constructor(
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, ActiveListing>) {
         service.getListingsByPage(keywords, params.key)
             .compose(applyObservableSchedulers())
-            .compose(applyNetworkState())
+            .doOnSubscribe { dataState.onNext(DataState.Loading) }
+            .doFinally { dataState.onNext(DataState.Loaded) }
             .subscribe({ response ->
-            with(response) {
-                callback.onResult(results, pagination.nextPage)
-            }
-        }, this::handleLoadError)
+                with(response) {
+                    callback.onResult(results, pagination.nextPage)
+                }
+            }, this::handleLoadError)
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, ActiveListing>) {
@@ -65,15 +67,16 @@ class ListingDataSource @Inject constructor(
 
     private fun handleLoadError(t: Throwable?) {
         Timber.e("Could not load listings from API because: $t")
+        dataState.onNext(DataState.Error("$t"))
     }
 
-    fun <T> applyNetworkState(): ObservableTransformer<T, T> {
-        return ObservableTransformer { upstream ->
-            upstream
-                .doOnSubscribe{networkState.onNext(NetworkState.Loading)}
-                .doFinally{networkState.onNext(NetworkState.Loaded)}
-        }
-    }
+//    fun <T> applyDataState(): ObservableTransformer<T, T> {
+//        return ObservableTransformer { upstream ->
+//            upstream
+//                .doOnSubscribe{dataState.onNext(DataState.Loading)}
+//                .doFinally{dataState.onNext(DataState.Loaded)}
+//        }
+//    }
 }
 
 private const val INITIAL_PAGE_KEY = 1
